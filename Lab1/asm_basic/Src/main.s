@@ -27,6 +27,27 @@ main:
 	LDR R3, =ANSWER // Load address of static variable into R3
 	STR R4, [R3]
 
+	// homework modification
+	// modify the code to store all odd numbers between 50 and 100
+	// in memory starting ANSWER + 4
+	// Currently, R3 holds the address of ANSWER
+	ADD R3, #4
+
+	// Free up R0-R2
+	// R0 - Current value
+	// R1 - Maximum #100
+	MOV R0, #51
+	MOV R1, #100
+
+loop:
+	// write to output address pointer, then go to next
+	STR R0, [R3], #4
+	// increment by 2, since we only need odd numbers
+	ADD R0, #2
+	CMP R0, R1
+	// go back to start of loop R0 < 100
+	BLT loop
+
 HALT:
 	B HALT
 

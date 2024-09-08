@@ -1,5 +1,5 @@
 /******************************************************************************
- * @project        : EE2028 Assignment 1 Program Template
+ * @project        : CG/[T]EE2028 Assignment 1 Program Template
  * @file           : main.c
  * @original author: CK Tham, ECE NUS
  * @modified by    : Ni Qingqing & Hou Linxin, ECE NUS
@@ -23,6 +23,7 @@
  */
 
 #include "stdio.h"
+#include <math.h> // Include to use roundf
 
 // Necessary function to enable printf() using semihosting
 extern void initialise_monitor_handles(void);
@@ -30,7 +31,7 @@ extern void initialise_monitor_handles(void);
 // Functions to be written in assembly
 extern int* optimize(int* coeff_arr, int x0_int, int lambda_int);
 
-// Optimization implementation in C
+// Optimization implementation in C for accurate result
 void optimize_c(int a, int b, float x0, float lambda)
 {
 	float fp, xprev, change, x=x0;
@@ -43,10 +44,34 @@ void optimize_c(int a, int b, float x0, float lambda)
 		x = x + change;
 		round = round + 1;
 
-//		printf("x: %f, fp: %f, change: %f\n", x, fp, change); //uncomment to see each step
+//		printf("x: %.1f, fp: %.1f, change: %.1f\n", x, fp, change); //uncomment to see each step
 		if (x==xprev) break;
 	}
 	printf("xsol : %.1f No. of rounds : %d \n\n", x, round);
+	return;
+}
+
+// Optimization implementation in C for comparison with ASM output
+void optimize_c_rounded(int a, int b, int x0, int lambda)
+{
+	int fp, xprev, change, x=x0;
+	int round = 0;
+
+	while (1)
+	{
+		fp = 2*a*x + b * 10;
+		xprev = x;
+		change = -lambda*fp/100;
+		x = x + change;
+		round = round + 1;
+
+//		printf("x: %d, fp: %d, change: %d\n", x, fp, change); //uncomment to see each step
+		if (x==xprev) break;
+	}
+
+	float x_f = x/10.0;
+	printf("xsol : %.1f No. of rounds : %d \n\n", x_f, round);
+
 	return;
 }
 
@@ -76,13 +101,16 @@ int main(void)
 	// call optimize.s
 	printf("ASM version:\n");
 	int *xsol = optimize((int*)arr, x0_int, lambda_int);
-	float xsol_float = xsol[0] / 10;
+	float xsol_float = xsol[0] / 10.0;
 	int xsol_round = xsol[1];
 	printf("xsol : %.1f No. of rounds : %d \n\n", xsol_float, xsol_round);
 
     // call optimize.c
-	printf("C version:\n");
+	printf("C version (accurate):\n");
 	optimize_c(a, b, x0, lambda);
+
+	// call optimize_c_rounded
+	printf("C version (reference):\n");
+	optimize_c_rounded(arr[0], arr[1], x0_int, lambda_int);
+
 }
-
-

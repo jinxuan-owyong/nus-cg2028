@@ -65,7 +65,7 @@ void optimize_c_rounded(int a, int b, int x0, int lambda)
 		x = x + change;
 		round = round + 1;
 
-//		printf("x: %d, fp: %d, change: %d\n", x, fp, change); //uncomment to see each step
+		printf("x: %d, fp: %d, change: %d\n", x, fp, change); //uncomment to see each step
 		if (x==xprev) break;
 	}
 

@@ -46,7 +46,7 @@ dowhile:
 	MOV R5, R1
 
 	// calculate fp
-	LDR R6, [R0]        // R6 temp = arr[0] = a
+	LDR R6, [R0]            // R6 temp = arr[0] = a
 	MUL R4, R6, R1          // a * x
 	LSL R4, #1              // x2
 
@@ -56,14 +56,9 @@ dowhile:
 	MUL R6, R8
 	ADD R4, R6              // + b*10
 
-	// TODO: improve division accuracy
-	// divide-by-multiply (/10 -> /10)
-	// 205/2048 = 0.1000098
-	MOV R6, #205
-	MUL R4, R6
-	ASR R4, #11
-	MUL R4, R6
-	ASR R4, #11
+	// calculate fp/100
+	MOV  R6, #100
+	SDIV R4, R6
 
 	// instead of
 	// change = -lambda*fp/100;

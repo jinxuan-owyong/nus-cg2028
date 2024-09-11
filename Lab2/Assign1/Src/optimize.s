@@ -29,15 +29,21 @@
 @ R4 fp
 @ R5 xprev
 @ R6 temp
-@ R8 temp
 @ write your program from here:
 
 optimize:
-	// Setup registers
-	MOV R3, #0
+	// Pre-calculate b*10 to reduce register usage
+	MOV R3, #10
+	LDR R4, [R0, #4]
+	MUL R4, R3
+	STR R4, [R0, #4]
+
 	// calculate 2's complement of lambda since we only use its negative value
 	MVN R2, R2  // 1's complement
 	ADD R2, #1  // 2's complement
+
+	// Initialise round to 0
+	MOV R3, #0
 
 dowhile:
 	ADD R3, #1
@@ -51,9 +57,6 @@ dowhile:
 	LSL R4, #1              // x2
 
 	LDR R6, [R0, #4]       // R6 temp = arr[1] = b
-	// TODO: pre-calculate b*10 to reduce register usage
-	MOV R8, #10
-	MUL R6, R8
 	ADD R4, R6              // + b*10
 
 	// calculate fp/100
@@ -70,9 +73,20 @@ dowhile:
 	TEQ R1, R5         // x and xprev
 	BNE dowhile        // while (x != xprev)
 
-	LDR R0, =RESULT    // output return value
-	STR R1, [R0], #4   // store x in RESULT[0]
-	STR R3, [R0], #-4  // store round in RESULT[1]
+store_result:
+	LDR R2, =RESULT    // output return value
+	STR R1, [R2], #4   // store x in RESULT[0]
+	STR R3, [R2], #-4  // store round in RESULT[1]
+
+cleanup:
+	// revert b*10 calculation in arr[1]
+	MOV  R3, #10
+	LDR  R4, [R0, #4]
+	SDIV R4, R3
+	STR  R4, [R0, #4]
+
+	// set R0 as output - see store_result
+	MOV R0, R2
 
 	BX LR
 

@@ -47,16 +47,14 @@ dowhile:
 
 	// calculate fp
 	LDR R6, [R0]        // R6 temp = arr[0] = a
-	ADD R0, #4
-	MUL R4, R6, R1      // a * x
-	LSL R4, #1          // x2
+	MUL R4, R6, R1          // a * x
+	LSL R4, #1              // x2
 
-	LDR R6, [R0]        // R6 temp = arr[1] = b
-	SUB R0, #4
+	LDR R6, [R0, #4]       // R6 temp = arr[1] = b
 	// TODO: pre-calculate b*10 to reduce register usage
 	MOV R8, #10
 	MUL R6, R8
-	ADD R4, R6          // + b*10
+	ADD R4, R6              // + b*10
 
 	// TODO: improve division accuracy
 	// divide-by-multiply (/10 -> /10)

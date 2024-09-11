@@ -29,7 +29,7 @@
 @ R4 fp
 @ R5 xprev
 @ R6 temp
-@ R7 temp
+@ R8 temp
 @ write your program from here:
 
 optimize:
@@ -54,8 +54,8 @@ dowhile:
 	LDR R6, [R0]        // R6 temp = arr[1] = b
 	SUB R0, #4
 	// TODO: pre-calculate b*10 to reduce register usage
-	MOV R7, #10
-	MUL R6, R7
+	MOV R8, #10
+	MUL R6, R8
 	ADD R4, R6          // + b*10
 
 	// TODO: improve division accuracy
@@ -77,10 +77,9 @@ dowhile:
 	TEQ R1, R5         // x and xprev
 	BNE dowhile        // while (x != xprev)
 
-	// TODO: fix values not returning
 	LDR R0, =RESULT    // output return value
-	STR R3, [R0], #4   // store round in RESULT[0]
-	STR R1, [R0], #-4  // store x in RESULT[1]
+	STR R1, [R0], #4   // store x in RESULT[0]
+	STR R3, [R0], #-4  // store round in RESULT[1]
 
 	BX LR
 

@@ -34,12 +34,15 @@
 optimize:
 	// Pre-calculate b*10 to reduce register usage
 	MOV R3, #10
+	// Machine code 1: 0x05904004
 	LDR R4, [R0, #4]
 	MUL R4, R3
+	// Machine code 2: 0x05804004
 	STR R4, [R0, #4]
 
 	// calculate 2's complement of lambda since we only use its negative value
 	MVN R2, R2  // 1's complement
+	// Machine code 3: 0x02822001
 	ADD R2, #1  // 2's complement
 
 	// Initialise round to 0
@@ -53,6 +56,7 @@ dowhile:
 
 	// calculate fp
 	LDR R6, [R0]            // R6 temp = arr[0] = a
+	// Machine code 4: 0x00004116
 	MUL R4, R6, R1          // a * x
 	LSL R4, #1              // x2
 
@@ -68,6 +72,7 @@ dowhile:
 	// x = x + change;
 	// we can simplify it to an MLA instruction
 	// x = -lambda * (fp/100) + x
+	// Machine code 5: 0x00211412
 	MLA R1, R2, R4, R1
 
 	TEQ R1, R5         // x and xprev
